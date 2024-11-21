@@ -27,7 +27,7 @@
 ## Getting Started
 To play the game, visit the link below:
 
-👉 [Play Quick Click!](https://tempestaethel.github.io/Quick-Click/)
+
 
 ## Future Improvements
 I do not plan to add future improvements to the game. However, if anyone wants to contribute or implement new features, feel free! 🚀
