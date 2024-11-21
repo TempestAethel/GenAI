@@ -52,9 +52,7 @@ Welcome to the **Memory Recall Game**! This interactive game is designed to chal
 
 - **Customization Options**: Tailor the game to suit your preferences with varying item counts and guessing limits, making it as easy or challenging as you want! 🔧
 
-## 🌐 Play Now!
 
-Ready to put your memory to the test? Try the game here: [Memory Recall Game](https://tempestaethel.github.io/Memory-Recall/)
 
 ---
 
