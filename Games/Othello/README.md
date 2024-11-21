@@ -1,6 +1,6 @@
 # 🎲 Othello Game Experience
 
-Welcome to my **Othello Game**! 👉 **[Play Here](https://tempestaethel.github.io/Othello/)**\
+
 Here’s what you can look forward to:
 
 ## 🌟 Stunning Visuals
