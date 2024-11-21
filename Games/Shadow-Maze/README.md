@@ -2,7 +2,6 @@
 
 Welcome to **Shadow Maze**, a fun and challenging maze navigation game where you have to find your way out of a randomly generated maze before time runs out! 🕹️✨
 
-Play it now: [Shadow Maze on GitHub Pages](https://tempestaethel.github.io/Shadow-Maze/)
 
 ---
 
