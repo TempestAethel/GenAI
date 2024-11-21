@@ -39,9 +39,6 @@ Welcome to the **Whack-a-Tile Game**! This interactive and fast-paced game is de
 5. **Reset the Game**:
    - Click the **Reset Game** button anytime to start a new session.
 
-## 🌐 Play Now!
-
-Ready to put your reflexes to the test? Try the game here: [Whack-a-Tile](https://tempestaethel.github.io/Whack-A-Tile/)
 
 ---
 
