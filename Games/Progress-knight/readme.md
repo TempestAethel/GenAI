@@ -7,7 +7,7 @@ Find full details [here](https://github.com/ihtasham42/progress-knight/tree/main
 ### Why mod?
 just for fun , since i like coding , i want to try something.\
 Never used java till now, this is my first dive into it.\
-[Click here to play](https://tempestaethel.github.io/Progress-knight/)
+[Click here to play](https://tempestaethel.github.io/GenAI/Games/Progress-knight/index.html)
 
 
 ### Where to play Progress Knight Original?
