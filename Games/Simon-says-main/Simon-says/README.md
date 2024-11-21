@@ -35,9 +35,7 @@ Welcome to the **Simon Says Game**! 🎉 Dive into a colorful world of memory ch
 - Features slick CSS animations for smooth transitions and effects! 🎶
 - Utilizes local storage to remember your high scores and last game performance! 📊
 
-## 🔗 Play Now
 
-Ready to put your memory to the test? Play the game [here](https://tempestaethel.github.io/Simon-says/)! Have a blast! 🎊
 
 ## 💡 Tips for Success
 
