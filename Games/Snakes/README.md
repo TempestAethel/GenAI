@@ -1,7 +1,7 @@
 # 🎮 Overview
 
 Welcome to the **Snake Game** project! In this repository, you'll find the HTML document `index.html`, which serves as a dynamic game selection interface. Players can dive straight into action by choosing between a single-player experience or an engaging multiplayer mode.
-👉 **[Play Here](https://tempestaethel.github.io/Snakes/)**
+
 
 ## 🐍 Snake Game Overview
 
