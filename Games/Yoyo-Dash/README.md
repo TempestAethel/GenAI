@@ -3,8 +3,7 @@
 ## About the Game
 Yoyo Dash is an engaging and dynamic canvas-based game where players control a bouncing ball to collect neon green dots while avoiding walls. With simple controls and an interactive environment, the game challenges players to achieve the highest score by collecting items and avoiding collisions. 🚀
 
-## Play the Game
-You can play Yoyo Dash online at: [Yoyo Dash](https://tempestaethel.github.io/Yoyo-Dash/) 🌐
+
 
 ## Features
 - **Interactive Gameplay:** Control the ball's movement using mouse position, adding a layer of interactivity. 🖱️
