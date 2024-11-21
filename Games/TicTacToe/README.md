@@ -1,5 +1,3 @@
-
-
 # Tic-Tac-Toe Game Features
 
 ## Overview
