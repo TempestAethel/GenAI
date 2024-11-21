@@ -8,12 +8,6 @@ Welcome to **Labyrinth of Shadows**, a thrilling maze adventure game where you m
 
 If you enjoyed the original game, you will love this new version with its added complexity and improved features! 💡
 
-- **Play the game here**:  
-  [Labyrinth of Shadows - Play Now](https://tempestaethel.github.io/Labyrinth-of-Shadows/) 🎮🌐
-
-- **You can also check out the original version** here:  
-  [Shadow Maze - Play Now](https://tempestaethel.github.io/Shadow-Maze/) 🏰💫
-
 In **Shadow Maze**, you navigate a static maze where you must avoid walls 🚧 and reach the exit 🚪. In **Labyrinth of Shadows**, however, the maze **shifts** 🔄 and resets after certain actions, adding new obstacles like **traps** 🛑. The game also comes with a **timer** ⏱️ to challenge your speed in completing the maze.
 
 ## How to Play 🎮
@@ -50,9 +44,6 @@ In **Shadow Maze**, you navigate a static maze where you must avoid walls 🚧 a
 In **Labyrinth of Shadows**, the gameplay has been **expanded** and **enhanced** with the introduction of new features like **trap-triggered maze changes** 🔄, **timed gameplay** ⏱️, and the ability to dynamically alter the maze. These changes make the game even more challenging and engaging! 💪 
 
 If you enjoyed the original **Shadow Maze**, you're sure to find **Labyrinth of Shadows** even more exciting and challenging! 🎉
-
-- **Play the original version here**:  
-  [Shadow Maze - Play Now](https://tempestaethel.github.io/Shadow-Maze/) 🏰💫
 
 ---
 
