@@ -3,8 +3,7 @@
 ## Overview
 "Memory Match-Up" is a fun and interactive card matching game that challenges players to find pairs of matching cards. The game is designed to improve memory and concentration skills while providing an enjoyable experience.
 
-## Play the Game
-You can play the game here: [Memory Match-Up](https://tempestaethel.github.io/Memory_Match-up/) 🌟
+
 
 ## Features
 
