@@ -22,12 +22,7 @@ A fun, fast-paced, and interactive game where you have 60 seconds to hunt for em
 
 ---
 
-## 🌐 Play Online
 
-You can play the game right now! 🎉  
-**[Play Emoji Hunt: Shadow Edition](https://tempestaethel.github.io/Emoji-Hunt/)**
-
----
 
 ## 🔧 Technologies Used
 
