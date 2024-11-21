@@ -57,9 +57,3 @@ After you win and the time is displayed, the game will **disable movement for 3 
 - **Game Algorithm**: Depth-First Search (DFS) to generate random mazes 🔍
 
 ---
-
-## 🏁 Play Now
-
-You can play **Shadow Maze** on GitHub Pages: [Shadow Maze Game](https://tempestaethel.github.io/Shadow-Maze/) 🌐
-
-Enjoy the maze, and may the fastest player win! 💪🎮
