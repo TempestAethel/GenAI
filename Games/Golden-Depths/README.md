@@ -39,13 +39,7 @@ Use sensory clues to help you navigate the maze, shoot arrows to try and defeat 
 
 ---
 
-## 🌐 Play Online
 
-You can play **Golden Depths: Wumpus World** directly in your browser! 🎮✨
-
-👉 [Play the game here](https://tempestaethel.github.io/Golden-Depths/)
-
----
 ## 📖 Game Instructions
 
 For a detailed guide on how to play, including controls and tips, visit the [Game Instructions](https://tempestaethel.github.io/Golden-Depths/info.html) page.
