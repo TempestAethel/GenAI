@@ -159,6 +159,7 @@
         cells[key] = true;
       }
       drawGrid();
+      saveGridState();
     });
 
     // Zoom in and out
@@ -265,8 +266,10 @@
 
       cells = newCells;
       drawGrid();
+      saveGridState();
     }
 
+    // Start/Stop Simulation
     document.getElementById("start").addEventListener("click", () => {
       if (!running) {
         running = true;
@@ -281,10 +284,47 @@
 
     document.getElementById("step").addEventListener("click", stepSimulation);
 
+    // Reset
     document.getElementById("reset").addEventListener("click", () => {
       cells = {};
       drawGrid();
+      saveGridState();
     });
+
+    // Keyboard Shortcuts for Play/Pause, Reset, Step
+    window.addEventListener("keydown", (event) => {
+      if (event.code === "Space") {
+        if (!running) {
+          running = true;
+          simulationInterval = setInterval(stepSimulation, 100);
+        } else {
+          running = false;
+          clearInterval(simulationInterval);
+        }
+      } else if (event.code === "KeyR") {
+        cells = {};
+        drawGrid();
+        saveGridState();
+      } else if (event.code === "KeyS") {
+        stepSimulation();
+      }
+    });
+
+    // LocalStorage
+    function saveGridState() {
+      localStorage.setItem("gridState", JSON.stringify(cells));
+    }
+
+    function loadGridState() {
+      const savedState = localStorage.getItem("gridState");
+      if (savedState) {
+        cells = JSON.parse(savedState);
+        drawGrid();
+      }
+    }
+
+    // Load the saved grid state on page load
+    loadGridState();
 
     drawGrid();
   </script>
