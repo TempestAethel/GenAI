@@ -186,7 +186,8 @@
 
     // Panning
     canvas.addEventListener("mousedown", (event) => {
-      if (event.button === 2) {
+      // Detect middle mouse button (button 1 is the left, button 2 is the middle, button 0 is the right)
+      if (event.button === 1 || event.button === 2) {
         isPanning = true;
         startX = event.clientX;
         startY = event.clientY;
