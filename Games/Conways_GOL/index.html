@@ -77,6 +77,7 @@
     let cells = {}; // Stores the grid's "alive" cells
     let isPanning = false;
     let startX, startY;
+    let touchStartTime = 0;
 
     // Simulation State
     let running = false;
@@ -184,9 +185,8 @@
       drawGrid();
     });
 
-    // Panning
+    // Panning - Mobile and Desktop (Middle/Right Mouse Button or Long Press)
     canvas.addEventListener("mousedown", (event) => {
-      // Detect middle mouse button (button 1 is the left, button 2 is the middle, button 0 is the right)
       if (event.button === 1 || event.button === 2) {
         isPanning = true;
         startX = event.clientX;
@@ -208,6 +208,33 @@
       canvas.style.cursor = "pointer";
     });
     canvas.addEventListener("contextmenu", (event) => event.preventDefault());
+
+    // Touch Events for Mobile
+    canvas.addEventListener("touchstart", (event) => {
+      touchStartTime = Date.now(); // Track when touch starts
+    });
+
+    canvas.addEventListener("touchmove", (event) => {
+      if (isPanning) {
+        const touch = event.touches[0];
+        offsetX += touch.clientX - startX;
+        offsetY += touch.clientY - startY;
+        startX = touch.clientX;
+        startY = touch.clientY;
+        drawGrid();
+      }
+    });
+
+    canvas.addEventListener("touchend", () => {
+      // After touch ends, stop panning if it wasn't a long press
+      if (Date.now() - touchStartTime < 3000) {
+        isPanning = false;
+      }
+    });
+
+    canvas.addEventListener("touchcancel", () => {
+      isPanning = false;
+    });
 
     // Simulation logic
     function stepSimulation() {
