@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conway's Game of Life</title>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #121212;
+      color: #f5f5f5;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: #ff9800;
+      margin-bottom: 20px;
+    }
+
+    #game-container {
+      display: grid;
+      grid-template-columns: repeat(50, 15px);
+      grid-gap: 1px;
+      background-color: #1e1e1e;
+      border: 2px solid #ff9800;
+      padding: 5px;
+    }
+
+    .cell {
+      width: 15px;
+      height: 15px;
+      background-color: #333;
+      border-radius: 2px;
+      transition: background-color 0.2s ease;
+    }
+
+    .cell.alive {
+      background-color: #76ff03;
+    }
+
+    #controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      background-color: #ff9800;
+      color: #121212;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e58900;
+    }
+  </style>
+</head>
+<body>
+  <h1>Conway's Game of Life</h1>
+  <div id="game-container"></div>
+  <div id="controls">
+    <button onclick="startGame()">Start</button>
+    <button onclick="pauseGame()">Pause</button>
+    <button onclick="resetGame()">Reset</button>
+  </div>
+
+  <script>
+    // Game variables
+    const rows = 30;
+    const cols = 50;
+    let grid = [];
+    let nextGrid = [];
+    let intervalId;
+    let isRunning = false;
+
+    const gameContainer = document.getElementById('game-container');
+
+    // Initialize the grid
+    function createGrid() {
+      grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+      nextGrid = Array.from({ length: rows }, () => Array(cols).fill(0));
+      gameContainer.innerHTML = '';
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const cell = document.createElement('div');
+          cell.classList.add('cell');
+          cell.addEventListener('click', () => toggleCell(r, c));
+          gameContainer.appendChild(cell);
+        }
+      }
+    }
+
+    // Toggle cell state on click
+    function toggleCell(r, c) {
+      grid[r][c] = grid[r][c] === 1 ? 0 : 1;
+      updateGridDisplay();
+    }
+
+    // Update the grid display
+    function updateGridDisplay() {
+      const cells = gameContainer.children;
+      let i = 0;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          cells[i].classList.toggle('alive', grid[r][c] === 1);
+          i++;
+        }
+      }
+    }
+
+    // Compute the next generation
+    function computeNextGeneration() {
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const aliveNeighbors = countAliveNeighbors(r, c);
+          if (grid[r][c] === 1) {
+            // Any live cell with 2 or 3 live neighbors survives.
+            nextGrid[r][c] = aliveNeighbors === 2 || aliveNeighbors === 3 ? 1 : 0;
+          } else {
+            // Any dead cell with exactly 3 live neighbors becomes a live cell.
+            nextGrid[r][c] = aliveNeighbors === 3 ? 1 : 0;
+          }
+        }
+      }
+      // Swap grids
+      [grid, nextGrid] = [nextGrid, grid];
+      updateGridDisplay();
+    }
+
+    // Count alive neighbors
+    function countAliveNeighbors(r, c) {
+      let count = 0;
+      const directions = [
+        [-1, -1], [-1, 0], [-1, 1],
+        [0, -1],          [0, 1],
+        [1, -1], [1, 0], [1, 1],
+      ];
+      for (const [dr, dc] of directions) {
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] === 1) {
+          count++;
+        }
+      }
+      return count;
+    }
+
+    // Start the game
+    function startGame() {
+      if (!isRunning) {
+        isRunning = true;
+        intervalId = setInterval(computeNextGeneration, 100);
+      }
+    }
+
+    // Pause the game
+    function pauseGame() {
+      if (isRunning) {
+        isRunning = false;
+        clearInterval(intervalId);
+      }
+    }
+
+    // Reset the game
+    function resetGame() {
+      pauseGame();
+      createGrid();
+      updateGridDisplay();
+    }
+
+    // Initialize the grid on page load
+    createGrid();
+  </script>
+</body>
+</html>
