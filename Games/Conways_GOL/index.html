@@ -3,55 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Conway's Game of Life</title>
+  <title>Conway's Game of Life (Zoomable & Infinite)</title>
   <style>
-    /* General Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
+      margin: 0;
       background-color: #121212;
-      color: #f5f5f5;
-      font-family: 'Arial', sans-serif;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
-      overflow: hidden;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
     }
 
-    h1 {
-      color: #ff9800;
-      margin-bottom: 20px;
-    }
-
-    #game-container {
-      display: grid;
-      grid-template-columns: repeat(50, 15px);
-      grid-gap: 1px;
-      background-color: #1e1e1e;
+    canvas {
       border: 2px solid #ff9800;
-      padding: 5px;
-    }
-
-    .cell {
-      width: 15px;
-      height: 15px;
-      background-color: #333;
-      border-radius: 2px;
-      transition: background-color 0.2s ease;
-    }
-
-    .cell.alive {
-      background-color: #76ff03;
+      cursor: grab;
     }
 
     #controls {
-      margin-top: 20px;
+      margin: 10px;
       display: flex;
       gap: 10px;
     }
@@ -74,7 +45,7 @@
 </head>
 <body>
   <h1>Conway's Game of Life</h1>
-  <div id="game-container"></div>
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
   <div id="controls">
     <button onclick="startGame()">Start</button>
     <button onclick="pauseGame()">Pause</button>
@@ -82,111 +53,183 @@
   </div>
 
   <script>
+    // Canvas and grid settings
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const cellSize = 20; // Default cell size
+    const zoomStep = 1.2;
+    let scale = 1;
+    let offsetX = 0; // Pan offset X
+    let offsetY = 0; // Pan offset Y
+    let isPanning = false;
+    let panStartX, panStartY;
+
     // Game variables
-    const rows = 30;
-    const cols = 50;
-    let grid = [];
-    let nextGrid = [];
-    let intervalId;
+    const liveCells = new Set(); // Stores live cells as "x,y" strings
     let isRunning = false;
+    let animationFrame;
 
-    const gameContainer = document.getElementById('game-container');
-
-    // Initialize the grid
-    function createGrid() {
-      grid = Array.from({ length: rows }, () => Array(cols).fill(0));
-      nextGrid = Array.from({ length: rows }, () => Array(cols).fill(0));
-      gameContainer.innerHTML = '';
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const cell = document.createElement('div');
-          cell.classList.add('cell');
-          cell.addEventListener('click', () => toggleCell(r, c));
-          gameContainer.appendChild(cell);
-        }
-      }
+    // Convert grid coordinates to a key for the Set
+    function key(x, y) {
+      return `${x},${y}`;
     }
 
-    // Toggle cell state on click
-    function toggleCell(r, c) {
-      grid[r][c] = grid[r][c] === 1 ? 0 : 1;
-      updateGridDisplay();
+    // Convert key back to coordinates
+    function parseKey(key) {
+      return key.split(",").map(Number);
     }
 
-    // Update the grid display
-    function updateGridDisplay() {
-      const cells = gameContainer.children;
-      let i = 0;
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          cells[i].classList.toggle('alive', grid[r][c] === 1);
-          i++;
-        }
+    // Render the grid
+    function drawGrid() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw cells
+      ctx.save();
+      ctx.translate(offsetX, offsetY);
+      ctx.scale(scale, scale);
+      liveCells.forEach(cellKey => {
+        const [x, y] = parseKey(cellKey);
+        ctx.fillStyle = "#76ff03";
+        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+      });
+      ctx.restore();
+
+      // Draw grid lines
+      ctx.save();
+      ctx.translate(offsetX % (cellSize * scale), offsetY % (cellSize * scale));
+      ctx.scale(scale, scale);
+      ctx.strokeStyle = "#333";
+      for (
+        let x = Math.floor(-offsetX / cellSize / scale) * cellSize;
+        x < canvas.width / scale - offsetX / scale;
+        x += cellSize
+      ) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height / scale);
+        ctx.stroke();
       }
+      for (
+        let y = Math.floor(-offsetY / cellSize / scale) * cellSize;
+        y < canvas.height / scale - offsetY / scale;
+        y += cellSize
+      ) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width / scale, y);
+        ctx.stroke();
+      }
+      ctx.restore();
     }
 
     // Compute the next generation
     function computeNextGeneration() {
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const aliveNeighbors = countAliveNeighbors(r, c);
-          if (grid[r][c] === 1) {
-            // Any live cell with 2 or 3 live neighbors survives.
-            nextGrid[r][c] = aliveNeighbors === 2 || aliveNeighbors === 3 ? 1 : 0;
-          } else {
-            // Any dead cell with exactly 3 live neighbors becomes a live cell.
-            nextGrid[r][c] = aliveNeighbors === 3 ? 1 : 0;
+      const neighborCounts = new Map();
+
+      // Count neighbors for all live cells
+      liveCells.forEach(cellKey => {
+        const [x, y] = parseKey(cellKey);
+        for (let dx = -1; dx <= 1; dx++) {
+          for (let dy = -1; dy <= 1; dy++) {
+            if (dx === 0 && dy === 0) continue;
+            const neighborKey = key(x + dx, y + dy);
+            neighborCounts.set(neighborKey, (neighborCounts.get(neighborKey) || 0) + 1);
           }
         }
-      }
-      // Swap grids
-      [grid, nextGrid] = [nextGrid, grid];
-      updateGridDisplay();
-    }
+      });
 
-    // Count alive neighbors
-    function countAliveNeighbors(r, c) {
-      let count = 0;
-      const directions = [
-        [-1, -1], [-1, 0], [-1, 1],
-        [0, -1],          [0, 1],
-        [1, -1], [1, 0], [1, 1],
-      ];
-      for (const [dr, dc] of directions) {
-        const nr = r + dr;
-        const nc = c + dc;
-        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] === 1) {
-          count++;
+      // Update live cells based on rules
+      const newLiveCells = new Set();
+      neighborCounts.forEach((count, cellKey) => {
+        if (count === 3 || (count === 2 && liveCells.has(cellKey))) {
+          newLiveCells.add(cellKey);
         }
-      }
-      return count;
+      });
+      liveCells.clear();
+      newLiveCells.forEach(cell => liveCells.add(cell));
     }
 
     // Start the game
     function startGame() {
       if (!isRunning) {
         isRunning = true;
-        intervalId = setInterval(computeNextGeneration, 100);
+        function gameLoop() {
+          computeNextGeneration();
+          drawGrid();
+          if (isRunning) {
+            animationFrame = requestAnimationFrame(gameLoop);
+          }
+        }
+        gameLoop();
       }
     }
 
     // Pause the game
     function pauseGame() {
-      if (isRunning) {
-        isRunning = false;
-        clearInterval(intervalId);
-      }
+      isRunning = false;
+      cancelAnimationFrame(animationFrame);
     }
 
     // Reset the game
     function resetGame() {
       pauseGame();
-      createGrid();
-      updateGridDisplay();
+      liveCells.clear();
+      drawGrid();
     }
 
-    // Initialize the grid on page load
-    createGrid();
+    // Toggle a cell's state
+    function toggleCell(x, y) {
+      const cellKey = key(x, y);
+      if (liveCells.has(cellKey)) {
+        liveCells.delete(cellKey);
+      } else {
+        liveCells.add(cellKey);
+      }
+    }
+
+    // Handle mouse events for zoom and pan
+    canvas.addEventListener("wheel", event => {
+      event.preventDefault();
+      const mouseX = (event.offsetX - offsetX) / scale;
+      const mouseY = (event.offsetY - offsetY) / scale;
+      const zoomFactor = event.deltaY > 0 ? 1 / zoomStep : zoomStep;
+      scale *= zoomFactor;
+      offsetX = event.offsetX - mouseX * scale;
+      offsetY = event.offsetY - mouseY * scale;
+      drawGrid();
+    });
+
+    canvas.addEventListener("mousedown", event => {
+      if (event.button === 0) {
+        const gridX = Math.floor((event.offsetX - offsetX) / scale / cellSize);
+        const gridY = Math.floor((event.offsetY - offsetY) / scale / cellSize);
+        toggleCell(gridX, gridY);
+        drawGrid();
+      } else if (event.button === 2) {
+        isPanning = true;
+        panStartX = event.clientX - offsetX;
+        panStartY = event.clientY - offsetY;
+        canvas.style.cursor = "grabbing";
+      }
+    });
+
+    canvas.addEventListener("mousemove", event => {
+      if (isPanning) {
+        offsetX = event.clientX - panStartX;
+        offsetY = event.clientY - panStartY;
+        drawGrid();
+      }
+    });
+
+    canvas.addEventListener("mouseup", () => {
+      isPanning = false;
+      canvas.style.cursor = "grab";
+    });
+
+    canvas.addEventListener("contextmenu", event => event.preventDefault());
+
+    // Initial draw
+    drawGrid();
   </script>
 </body>
 </html>
