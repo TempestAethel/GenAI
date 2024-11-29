@@ -75,7 +75,8 @@
         </ul>
     </div>
 
-    <canvas id="lifeCanvas"></canvas>
+    <!-- Fixed-size Canvas -->
+    <canvas id="lifeCanvas" width="400" height="400"></canvas>
 
     <div class="pattern-list">
         <button onclick="showPattern('glider')">Glider</button>
@@ -186,19 +187,27 @@
         const pattern = patterns[patternName];
         const canvas = document.getElementById("lifeCanvas");
         const ctx = canvas.getContext("2d");
-        const cellSize = 10;
+        const cellSize = 10; // Adjust cell size to fit the fixed canvas size
         const rows = pattern.length;
         const cols = pattern[0].length;
 
-        canvas.width = cols * cellSize;
-        canvas.height = rows * cellSize;
+        // Scale the pattern to fit within the fixed canvas size (400x400)
+        const maxCols = 40; // Adjust for the fixed canvas width
+        const maxRows = 40; // Adjust for the fixed canvas height
+        const scaleX = maxCols / cols;
+        const scaleY = maxRows / rows;
+        const scale = Math.min(scaleX, scaleY);
+
+        canvas.width = maxCols * cellSize;
+        canvas.height = maxRows * cellSize;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // Scale and draw the pattern
         for (let y = 0; y < rows; y++) {
             for (let x = 0; x < cols; x++) {
                 if (pattern[y][x] === 1) {
                     ctx.fillStyle = "#00ff00";
-                    ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                    ctx.fillRect(x * cellSize * scale, y * cellSize * scale, cellSize * scale, cellSize * scale);
                 }
             }
         }
