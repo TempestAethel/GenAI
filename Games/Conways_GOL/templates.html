@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conway's Game of Life - Patterns Showcase</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #1c1c1c; color: #fff; text-align: center; padding: 20px; }
+        canvas { border: 2px solid #444; background-color: #222; margin-top: 20px; }
+        button { background-color: #333; color: #fff; border: 1px solid #555; padding: 10px 20px; margin: 10px; cursor: pointer; }
+        button:hover { background-color: #444; }
+        .pattern-list { display: flex; flex-wrap: wrap; justify-content: center; margin: 10px 0; }
+        .pattern-list button { margin: 5px; }
+        h1 { font-size: 24px; }
+        p { font-size: 16px; }
+        .rules { background-color: #333; padding: 15px; margin-bottom: 20px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Conway's Game of Life - Patterns Showcase</h1>
+    <div class="rules">
+        <h2>Rules of Conway's Game of Life:</h2>
+        <p>The Game of Life is a cellular automaton devised by mathematician John Conway. The grid evolves based on these simple rules:</p>
+        <ul>
+            <li><strong>Birth:</strong> A dead cell with exactly three live neighbors becomes a live cell.</li>
+            <li><strong>Survival:</strong> A live cell with two or three live neighbors remains alive.</li>
+            <li><strong>Death:</strong> A live cell with fewer than two live neighbors dies (underpopulation), and a live cell with more than three live neighbors dies (overpopulation).</li>
+        </ul>
+    </div>
+    <canvas id="lifeCanvas"></canvas>
+    <div class="pattern-list">
+        <button onclick="showPattern('glider')">Glider</button>
+        <button onclick="showPattern('block')">Block</button>
+        <button onclick="showPattern('blinker')">Blinker</button>
+        <button onclick="showPattern('toad')">Toad</button>
+        <button onclick="showPattern('beacon')">Beacon</button>
+        <button onclick="showPattern('pulsar')">Pulsar</button>
+        <button onclick="showPattern('pentadecathlon')">Pentadecathlon</button>
+        <button onclick="showPattern('gliderGun')">Glider Gun</button>
+        <button onclick="showPattern('boat')">Boat</button>
+        <button onclick="showPattern('acorn')">Acorn</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('lifeCanvas');
+        const ctx = canvas.getContext('2d');
+        const cellSize = 10;
+        const rows = 20;
+        const cols = 20;
+        canvas.width = cols * cellSize;
+        canvas.height = rows * cellSize;
+
+        const patterns = {
+            glider: [[1, 0, 0], [0, 1, 1], [1, 1, 0]],
+            block: [[1, 1], [1, 1]],
+            blinker: [[1, 1, 1]],
+            toad: [[0, 1, 1, 1], [1, 1, 0, 0]],
+            beacon: [[1, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 1], [0, 0, 1, 1]],
+            pulsar: [
+                [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+                [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0]
+            ],
+            pentadecathlon: [
+                [0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+                [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1]
+            ],
+            gliderGun: [
+                [0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1]
+            ],
+            boat: [[1, 1, 0], [1, 0, 1], [0, 1, 1]],
+            acorn: [
+                [0, 1, 1, 0], [1, 0, 1, 1], [0, 1, 0, 1]
+            ]
+        };
+
+        function drawGrid(grid) {
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    ctx.fillStyle = grid[row][col] === 1 ? '#4CAF50' : '#222';
+                    ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                    ctx.strokeStyle = '#444';
+                    ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                }
+            }
+        }
+
+        function showPattern(pattern) {
+            let grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+            let shape = patterns[pattern];
+
+            for (let r = 0; r < shape.length; r++) {
+                for (let c = 0; c < shape[r].length; c++) {
+                    if (shape[r][c]) {
+                        grid[r + 5][c + 5] = 1; // Center pattern
+                    }
+                }
+            }
+
+            drawGrid(grid);
+        }
+
+        showPattern('glider'); // Show Glider by default
+    </script>
+</body>
+</html>
