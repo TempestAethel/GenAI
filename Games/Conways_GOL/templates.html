@@ -202,13 +202,16 @@
         canvas.height = maxRows * cellSize;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Scale and draw the pattern
+        // Scale and draw the pattern with grid lines
         for (let y = 0; y < rows; y++) {
             for (let x = 0; x < cols; x++) {
                 if (pattern[y][x] === 1) {
                     ctx.fillStyle = "#00ff00";
                     ctx.fillRect(x * cellSize * scale, y * cellSize * scale, cellSize * scale, cellSize * scale);
                 }
+                // Draw grid lines
+                ctx.strokeStyle = "#444";
+                ctx.strokeRect(x * cellSize * scale, y * cellSize * scale, cellSize * scale, cellSize * scale);
             }
         }
     }
