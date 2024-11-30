@@ -745,7 +745,7 @@ axis([0 11 0 1.5]), grid on;
             },
             {
                 header: "Prg 7",
-                question: "DC Program Question Placeholder",
+                question: "16 QAM",
                 code: 
 `M = 16;               % Modulation order
 k = log2(M);           % Number of bits per symbol
