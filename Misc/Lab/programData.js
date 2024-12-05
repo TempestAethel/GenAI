@@ -59,79 +59,6 @@ const programData = {
         DSP: [
             {
                 header: "DSP Program Placeholder",
-                question: "DFT and IDFT Linear  Convolution",
-                code: 
-                `
-clc;
-clear all;
-close all;
-x=input('enter the first input sequence=');
-h=input('enter the second input sequence=');
-l=length(x);
-m=length(h);
-N=max(l,m);
-Xk=fft(x,N);
-Hk=fft(h,N);
-Yk=Xk.*Hk;
-y=ifft(Yk,N);
-disp('circuler convoluted output using DFT and IDFT method');
-disp(y);
-subplot(3,1,1);
-stem(x);
-title('the first sequence');
-xlabel('time');
-ylabel('amplitude');
-subplot(3,1,2);
-stem(h);
-title('the second sequence');
-xlabel('time');
-ylabel('amplitude');
-subplot(3,1,3);
-stem(y);
-title('the circuler convoluted sequence');
-xlabel('time');
-ylabel('amplitude');
-                `
-            },
-            {
-                header: "DSP Program Placeholder",
-                question: "DFT and IDFT Circular Convolution",
- code: 
-                `
-clc;
-clear all;
-close all;
-x=input('enter the first input sequence=');
-h=input('enter the second input sequence=');
-l=length(x);
-m=length(h);
-N=l+m-1;
-Xk=fft(x,N);
-Hk=fft(h,N);
-Yk=Xk.*Hk;
-y=ifft(Yk,N);
-disp('linear convoluted output using DFT and IDFT method');
-disp(y);
-subplot(3,1,1);
-stem(x);
-title('the first sequence');
-xlabel('time');
-ylabel('amplitude');
-subplot(3,1,2);
-stem(h);
-title('the second sequence');
-xlabel('time');
-ylabel('amplitude');
-subplot(3,1,3);
-stem(y);
-title('the linear convoluted sequence');
-xlabel('time');
-ylabel('amplitude');
-
-                
-                `            },
-            {
-                header: "DSP Program Placeholder",
                 question: "Linearity property",
  code: 
                 `
@@ -214,117 +141,6 @@ if(floor(abs(yk)))==(floor(abs(yv)))
       disp('circular frequency shift property is not satisfied');  
 end;
                 
-                `            },
-            {
-                header: "DSP Program Placeholder",
-                question: "Analyse causal system",
- code: 
-                `
-% Define the transfer function H(z)
-syms z;
-H_z = 1 / (1 - 0.9*z^(-1)); % Transfer function in terms of z
-% Display the transfer function
-disp('Transfer function H(z) is:');
-pretty(H_z);
-% Convert to a rational transfer function (polynomial in z)
-H_z_poly = simplify(H_z);
-H_z_poly = collect(H_z_poly, z);
-% Plot the frequency response of H(z)
-f = linspace(-pi, pi, 1000); % Frequency range from -pi to pi
-H_w = @(w) 1 ./ (1 - 0.9 * exp(-1i * w)); % Frequency response H(w)
-% Calculate the magnitude and phase of H(z) over the frequency range
-mag_H = abs(H_w(f)); % Magnitude of the transfer function
-phase_H = angle(H_w(f)); % Phase of the transfer function
-% Plot magnitude and phase response
-figure;
-subplot(2,1,1);
-plot(f, mag_H);
-title('Magnitude Response of H(z)');
-xlabel('Frequency (rad/sample)');
-ylabel('Magnitude');
-subplot(2,1,2);
-plot(f, phase_H);
-title('Phase Response of H(z)');
-xlabel('Frequency (rad/sample)');
-ylabel('Phase (radians)');
-% Plot the pole-zero plot
-figure;
-pzplot(H);
-title('Pole-Zero Plot of H(z)');
-% Define the number of samples
-N = 10; % Number of samples to display (can be adjusted)
-% Define the time index n (0 to N-1)
-n = 0:N-1;
-% Compute the impulse response h(n) = 0.9^n for n >= 0
-h_n = (0.9).^n; % Impulse response
-% Display the impulse response values
-disp('Impulse Response h(n):');
-disp(h_n);
-% Plot the impulse response
-figure;
-stem(n, h_n, 'filled', 'MarkerSize', 6);
-title('Impulse Response h(n) = 0.9^n');
-xlabel('n');
-ylabel('h(n)');
-grid on;                
-                `            },
-            {
-                            header: "DSP Program Placeholder",
-                question: "Analyse causal system2",
- code: 
-                `
-% Define the transfer function H(z)
-
-num = [1]; % Numerator coefficients (z)
-den = [1 -0.9]; % Denominator coefficients (z - 0.9)
-
-% Create the transfer function
-H = tf(num, den, -1); % -1 indicates discrete time
-disp('seros and poles Located at')
-[zz,pp] = tf2zp(num,den)
-
-% a) Pole-Zero Plot
-figure;
-pzmap(H);
-title('Pole-Zero Plot of H(z)');
-grid on;
-
-% b) Frequency Response
-omega = linspace(-pi, pi, 1024); % Frequency range
-H_freq = freqz(num, den, omega); % Frequency response
-
-% Magnitude and Phase
-magnitude = abs(H_freq);
-phase = angle(H_freq);
-
-% Plot Magnitude Response
-figure;
-subplot(2, 1, 1);
-plot(omega, magnitude);
-title('Magnitude Response');
-xlabel('frequency in radians');
-ylabel('Magnitude');
-
-% Plot Phase Response
-subplot(2, 1, 2);
-plot(omega, phase);
-title('Phase Response');
-xlabel('frequency in radians');
-ylabel('Phase values');
-
-
-% c) Impulse Response
-n = 0:20; % Time index
-h = (0.9).^n; % Impulse response for n >= 0
-h(1) = 1; % h(0) = 1 for the impulse response
-disp('Samples of impulse response')
-disp(h);
-figure;
-stem(n, h);
-title('Impulse Response h(n)');
-xlabel('n');
-ylabel('Amplitude');
-           
                 `            },
             {
                 header: "DSP Program Placeholder",
@@ -569,6 +385,136 @@ enter the pass band frequency=150
 enter the stop band frequency=300
 enter the sampling frequency=1500                
                 `            },
+{
+                header: "DSP Program Placeholder",
+                question: "DFT and IDFT Linear  Convolution",
+                code: 
+                `
+clc;
+clear all;
+close all;
+x=input('enter the first input sequence=');
+h=input('enter the second input sequence=');
+l=length(x);
+m=length(h);
+N=max(l,m);
+Xk=fft(x,N);
+Hk=fft(h,N);
+Yk=Xk.*Hk;
+y=ifft(Yk,N);
+disp('circuler convoluted output using DFT and IDFT method');
+disp(y);
+subplot(3,1,1);
+stem(x);
+title('the first sequence');
+xlabel('time');
+ylabel('amplitude');
+subplot(3,1,2);
+stem(h);
+title('the second sequence');
+xlabel('time');
+ylabel('amplitude');
+subplot(3,1,3);
+stem(y);
+title('the circuler convoluted sequence');
+xlabel('time');
+ylabel('amplitude');
+                `
+            },
+            {
+                header: "DSP Program Placeholder",
+                question: "DFT and IDFT Circular Convolution",
+ code: 
+                `
+clc;
+clear all;
+close all;
+x=input('enter the first input sequence=');
+h=input('enter the second input sequence=');
+l=length(x);
+m=length(h);
+N=l+m-1;
+Xk=fft(x,N);
+Hk=fft(h,N);
+Yk=Xk.*Hk;
+y=ifft(Yk,N);
+disp('linear convoluted output using DFT and IDFT method');
+disp(y);
+subplot(3,1,1);
+stem(x);
+title('the first sequence');
+xlabel('time');
+ylabel('amplitude');
+subplot(3,1,2);
+stem(h);
+title('the second sequence');
+xlabel('time');
+ylabel('amplitude');
+subplot(3,1,3);
+stem(y);
+title('the linear convoluted sequence');
+xlabel('time');
+ylabel('amplitude');
+`
+            },
+            {
+                header: "DSP Program Placeholder", 
+                question: "Analyse causal system2",
+ code: 
+                `
+% Define the transfer function H(z)
+
+num = [1]; % Numerator coefficients (z)
+den = [1 -0.9]; % Denominator coefficients (z - 0.9)
+
+% Create the transfer function
+H = tf(num, den, -1); % -1 indicates discrete time
+disp('seros and poles Located at')
+[zz,pp] = tf2zp(num,den)
+
+% a) Pole-Zero Plot
+figure;
+pzmap(H);
+title('Pole-Zero Plot of H(z)');
+grid on;
+
+% b) Frequency Response
+omega = linspace(-pi, pi, 1024); % Frequency range
+H_freq = freqz(num, den, omega); % Frequency response
+
+% Magnitude and Phase
+magnitude = abs(H_freq);
+phase = angle(H_freq);
+
+% Plot Magnitude Response
+figure;
+subplot(2, 1, 1);
+plot(omega, magnitude);
+title('Magnitude Response');
+xlabel('frequency in radians');
+ylabel('Magnitude');
+
+% Plot Phase Response
+subplot(2, 1, 2);
+plot(omega, phase);
+title('Phase Response');
+xlabel('frequency in radians');
+ylabel('Phase values');
+
+
+% c) Impulse Response
+n = 0:20; % Time index
+h = (0.9).^n; % Impulse response for n >= 0
+h(1) = 1; % h(0) = 1 for the impulse response
+disp('Samples of impulse response')
+disp(h);
+figure;
+stem(n, h);
+title('Impulse Response h(n)');
+xlabel('n');
+ylabel('Amplitude');
+           
+`            },
             // Additional DSP programs can be added here
             /*
             {
