@@ -974,7 +974,86 @@ ylabel('Bit vs SNR for Rectangular Pulse Shapng in AWGN Channel');
 grid on;
 `
             },
+            {
+                header: "Additional DC Program Placeholder",
+                question: "Cyclic Redundancy check",
+                code: 
+`
+#include <stdio.h>
+#include <string.h>
 
+char t[28], cs[28], g[] = "1101";    % without error - g[] = "101101"
+int a, e, c;
+
+#define N strlen(g)
+
+main()
+{
+    printf("\nEnter the Data: ");
+    scanf("%s", t);
+    printf("\n\nThe Generator Polynomial is: %s\n", g);
+    a = strlen(t);
+
+    for (e = a; e < a + N - 1; e++)
+        t[e] = '0';
+    
+    printf("\nThe modified data is: %s\n", t);
+    crc();
+    printf("\nChecksum is: %s\n", cs);
+
+    for (e = a; e < a + N - 1; e++)
+        t[e] = cs[e - a];
+    
+    printf("\nThe Final Codeword is: %s\n", t);
+    printf("\nTest Error Detection 0(YES) 1(NO)? :");
+    scanf("%d", &e);
+
+    if (e == 0)
+    {
+        do
+        {
+            printf("\nEnter the position where Error is to be inserted: ");
+            scanf("%d", &e);
+        } while (e == 0 || e > a + N - 1);
+
+        t[e - 1] = (t[e - 1] == '0') ? '1' : '0';
+        printf("\nErroneous Data: %s\n", t);
+    }
+
+    crc();
+    for (e = 0; (e < N - 1) && (cs[e] != '1'); e++);
+
+    if (e < N - 1)
+        printf("\nError Detected\n\n");
+    else
+        printf("\nNo Error Detected\n\n");
+
+    return 0;
+}
+
+crc()
+{
+    for (e = 0; e < N; e++)
+        cs[e] = t[e];
+
+    do
+    {
+        if (cs[0] == '1')
+            xor();
+
+        for (c = 0; c < N - 1; c++)
+            cs[c] = cs[c + 1];
+
+        cs[c] = t[e++];
+    } while (e <= a + N - 1);
+}
+
+xor()
+{
+    for (c = 1; c < N; c++)
+        cs[c] = ((cs[c] == g[c]) ? '0' : '1');
+}`
+            }
 
 
             
