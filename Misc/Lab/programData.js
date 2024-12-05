@@ -581,176 +581,261 @@ enter the sampling frequency=1500
         ],
         DC: [
             {
-                header: "Prg 4:Gram-Schmidt Orthogonalization",
-                question: "To find orthogonal basis vectors for the given set of vectors and plot the orthonormal vectors.",
+                header: "Additional DC Program Placeholder",
+                question: "COnvolution Code",
                 code: 
-`clc; close all; clear all;
+`
+clc;
+clear all;
+close all;
+k=input('Number of shift register:');
+g1=input('Enter the value to generator1:');
+g2=input('Enter the value to generator2:');
+m=input('Enter message bits:');
+trel=poly2trellis(k,[g1 g2]);
+encoded=convenc(m,trel);
+disp('Encoded output:');
+disp(encoded);
+tblen=length(m);
+decoded=vitdec(encoded,trel,tblen,'trunc','hard');
+disp('Decoded output:');
+disp(decoded);
 
-% Define the set of input vectors (3x3 matrix, each column is a vector)
+
+`
+            },
+            {
+                header: "Additional DC Program Placeholder",
+                question: "Hamming code",
+                code: 
+`
+clc;
+clear all;
+k=input('enter the length of the message word:');
+n=input('enter the length of the codeword:');
+p=input('enter the parity matrix:');
+disp('generator matrix:');
+G=[eye(k) p];
+disp(G);
+m=input('enter the message word:');
+disp('codeword:');
+C=encode(m,n,k, 'linear',G);
+disp(C);
+H=[p' eye(n-k)];
+disp('h matrix:');
+disp(H);
+dtable=syndtable(H);
+R=input('enter the recieved codeword: ');
+Syndrome=rem(R*H', 2);
+disp('syndrome:');
+disp(Syndrome);
+Syn_position=bi2de(Syndrome,'left-msb');
+disp('syndrome position:');
+disp(Syn_position);
+if (Syndrome==0)
+ disp('the recieved codeword is valid')
+ else
+ disp('the recieved codeword is invalid')
+ E=dtable(Syn_position+1,:)
+ disp('the corrected word is :')
+ CC=rem(R+E, 2);
+ disp(CC);
+ msg=CC(1:k);
+end
+D=decode(C,n,k,'linear',G);
+%[1 1 1 ;1 1 0 ;1 0 1 ;0 1 1 ]
+%[0 0 1 1]
+%[0 1 1 1 1 1 0]
+`
+            },
+            {
+                header: "Additional DC Program Placeholder",
+                question: "Huffman Code",
+                code: 
+`
+clc;
+clear all;
+close all;
+x=input('Enter the Number of Symbols:');
+N=1:x;
+disp('Number of Symbols are:'); disp(N);
+P=input('Enter the Probabilty:');
+S=sort(P,'descend');
+disp('Sorted Probabilty are:'); disp(S);
+[dict,avglen]=huffmandict(N,S);
+disp('Average length is:');
+H=0;
+for i=1:x
+    H=H+(P(i)*log2(1/P(i)));
+end;
+disp('Entropy is:'); disp(H);
+Efficiency=(H/avglen)*100;
+disp('Efficiency is:'); disp(Efficiency);
+Codeword=huffmanenco(N,dict);
+disp('code word is:');
+disp(Codeword);
+disp('decoded symbol are:');
+decode=huffmandeco(Codeword,dict);
+disp(decode);
+
+`
+            },
+            {
+                header: "Additional DC Program Placeholder",
+                question: "Gram SChmidt orthogonalisation",
+                code: 
+`
+clc; close all; clear all;
+% Define the set of input vectors 3x3 matrix where each column is a vector
 V = [1 1 0; 1 0 1; 0 1 1]'; % Linearly Independent vectors
-%V = rand(3, 3); % Uncomment for random vectors
-%V = [1 2 3; 1 5 2; 2 4 6]'; % Uncomment for linearly dependent vectors
-
-% Number of vectors (columns of the matrix)
-n = size(V, 2); % The number of input vectors
-
-% Initialize the matrix for storing orthogonal vectors
-U = zeros(size(V)); 
-
-% Gram-Schmidt Process: Convert linearly independent vectors to orthogonal vectors
+%V = rand(3, 3);
+%V = [1 2 3; 1 5 2; 2 4 6]'; %Linearly Dependent
+%V = [3 2 1;1 2 3;0 1 4];
+% Number of vectors
+n = size(V, 2);% no of columns(vectors)
+% Initialize the matrix for orthogonal vectors
+U = zeros(size(V));
+% Gram-Schmidt Process
 for i = 1:n
-    % Start with the original vector
-    U(:, i) = V(:, i);
+ % Start with the original vector
+ U(:, i) = V(:, i);
 
-    % Subtract projections of all previous orthogonal vectors from the current vector
-    for j = 1:i-1
-        % Calculate the projection of V(:, i) onto U(:, j) and subtract it
-        U(:, i) = U(:, i) - (dot(U(:, j), V(:, i)) / dot(U(:, j), U(:, j))) * U(:, j);
-    end
+ % Subtract projections of previous orthogonal vectors
+ for j = 1:i-1
+ U(:, i) = U(:, i) - (dot(U(:, j), V(:, i)) / dot(U(:, j), U(:, j))) * U(:, j);
+ end
 end
-
 % Normalize the orthogonal vectors to make them orthonormal
-E = zeros(size(U)); % Initialize the matrix for orthonormal vectors
+E = zeros(size(U));
 for i = 1:n
-    % Normalize each vector (divide by its norm)
-    E(:, i) = U(:, i) / norm(U(:, i));
+ E(:, i) = U(:, i) / norm(U(:, i));
 end
-
-% Display results for the original, orthogonal, and orthonormal vectors
+% Display the results
 disp('Original Vectors (V):');
 disp(V);
 disp('Orthogonal Vectors (U):');
 disp(U);
 disp('Orthonormal Vectors (E):');
 disp(E);
-
 % Plotting the original vectors
-figure; % Create a new figure
-hold on; % Retain current plot so we can overlay other vectors
-grid on; % Enable grid
-
-% Plot each original vector as a 3D arrow
-quiver3(0, 0, 0, V(1, 1), V(2, 1), V(3, 1), 'r', 'LineWidth', 2); % Vector V1 (Red)
-quiver3(0, 0, 0, V(1, 2), V(2, 2), V(3, 2), 'g', 'LineWidth', 2); % Vector V2 (Green)
-quiver3(0, 0, 0, V(1, 3), V(2, 3), V(3, 3), 'b', 'LineWidth', 2); % Vector V3 (Blue)
-
-% Plot the orthonormal vectors as dashed arrows
-quiver3(0, 0, 0, E(1, 1), E(2, 1), E(3, 1), 'r--', 'LineWidth', 2); % Vector E1 (Red Dashed)
-quiver3(0, 0, 0, E(1, 2), E(2, 2), E(3, 2), 'g--', 'LineWidth', 2); % Vector E2 (Green Dashed)
-quiver3(0, 0, 0, E(1, 3), E(2, 3), E(3, 3), 'b--', 'LineWidth', 2); % Vector E3 (Blue Dashed)
-
-% Setting up the plot labels, title, and legend
-xlabel('X'); % X-axis label
-ylabel('Y'); % Y-axis label
-zlabel('Z'); % Z-axis label
-title('Gram-Schmidt Orthonormalization'); % Plot title
-legend({'V1', 'V2', 'V3', 'E1', 'E2', 'E3'}, 'Location', 'Best'); % Legend
-
-% Make sure the axes are equally scaled
+figure;
+hold on;
+grid on;
+quiver3(0, 0, 0, V(1, 1), V(2, 1), V(3, 1), 'r', 'LineWidth', 2);
+quiver3(0, 0, 0, V(1, 2), V(2, 2), V(3, 2), 'g', 'LineWidth', 2);
+quiver3(0, 0, 0, V(1, 3), V(2, 3), V(3, 3), 'b', 'LineWidth', 2);
+% Plotting the orthonormal vectors
+quiver3(0, 0, 0, E(1, 1), E(2, 1), E(3, 1), 'r--', 'LineWidth', 2);
+quiver3(0, 0, 0, E(1, 2), E(2, 2), E(3, 2), 'g--', 'LineWidth', 2);
+quiver3(0, 0, 0, E(1, 3), E(2, 3), E(3, 3), 'b--', 'LineWidth', 2);
+% Setting up the plot
+xlabel('X');
+ylabel('Y');
+zlabel('Z');
+title('Gram-Schmidt Orthonormalization');
+legend({'V1', 'V2', 'V3', 'E1', 'E2', 'E3'}, 'Location', 'Best');
 axis equal;
+hold off;
 
-% Release the plot hold so further plotting won't affect this figure
-hold off;`
-            },
-
-                {
-                header: "Prg 5:QPSK",
-                question: "Modulation and Demodulation oF Quadrature Phase Shift Keying",
-                code: 
-`clc;
-clear all;
-close all;
-
-% Define binary data to transmit
-data = [0 1 0 1 1 1 0 0 1 1]; 
-
-% Plot the original data before transmission
-figure(1)
-stem(data, 'linewidth', 3), grid on;
-title('Information before Transmitting');
-axis([0 11 0 1.5]);
-
-% Convert data to NZR format (0 -> -1, 1 -> 1)
-data_NZR = 2 * data - 1; 
-
-% Serial-to-Parallel (S/P) conversion for QPSK
-s_p_data = reshape(data_NZR, 2, length(data) / 2); 
-
-% Transmission parameters
-br = 10^6; % Bit rate (1 Mbps)
-f = br; % Carrier frequency
-T = 1 / br; % Bit duration
-t = T / 99 : T / 99 : T; % Time vector for one bit
-
-% XXXXXXXXXXXXXXXXXXXXXXXX QPSK Modulation XXXXXXXXXXXXXXXXXXXXXXXXXXXX
-y = []; % Initialize modulated signal
-y_in = []; % In-phase signal
-y_qd = []; % Quadrature signal
-
-% Modulate each pair of data
-for i = 1 : length(data) / 2
-    y1 = s_p_data(1, i) * cos(2 * pi * f * t); % In-phase component
-    y2 = s_p_data(2, i) * sin(2 * pi * f * t); % Quadrature component
-    
-    y_in = [y_in y1];
-    y_qd = [y_qd y2];
-    y = [y y1 + y2]; % Combine for QPSK signal
-end
-
-% Modulated signal (Tx_sig)
-Tx_sig = y;
-tt = T / 99 : T / 99 : (T * length(data)) / 2; % Time vector for entire signal
-
-% Plot modulated signals
-figure(2)
-subplot(3, 1, 1);
-plot(tt, y_in, 'linewidth', 3), grid on;
-title('In-phase Component');
-
-subplot(3, 1, 2);
-plot(tt, y_qd, 'linewidth', 3), grid on;
-title('Quadrature Component');
-
-subplot(3, 1, 3);
-plot(tt, Tx_sig, 'r', 'linewidth', 3), grid on;
-title('QPSK Modulated Signal');
-
-% Demodulation
-
-Rx_data = []; % Initialize received data
-Rx_sig = Tx_sig; % Assume no noise, received signal = transmitted signal
-
-% Demodulate for each data pair
-for i = 1 : length(data) / 2
-    % In-phase detection
-    Z_in = Rx_sig((i - 1) * length(t) + 1 : i * length(t)) .* cos(2 * pi * f * t);
-    Z_in_intg = (trapz(t, Z_in)) * (2 / T); % Integrate and make decision
-    Rx_in_data = Z_in_intg > 0;
-
-    % Quadrature detection
-    Z_qd = Rx_sig((i - 1) * length(t) + 1 : i * lehngth(t)) .* sin(2 * pi * f * t);
-    Z_qd_intg = (trapz(t, Z_qd)) * (2 / T); % Integrate and make decision
-    Rx_qd_data = Z_qd_intg > 0;
-
-    % Store received bits
-    Rx_data = [Rx_data Rx_in_data Rx_qd_data];
-end
-
-% Plot received data
-figure(3)
-stem(Rx_data, 'linewidth', 3);
-title('Information after Receiving');
-axis([0 11 0 1.5]), grid on;
 `
             },
             {
-                header: "Prg 7",
-                question: "16 QAM",
+                header: "Additional DC Program Placeholder",
+                question: "QPSK modulation and Demodulation",
                 code: 
-`M = 16;               % Modulation order
-k = log2(M);           % Number of bits per symbol
-n = 30000;             % Number of symbols per frame
-sps = 1;               % Number of samples per symbol
+`
+
+clc;
+clear all;
+close all;
+data=[0 1 0 1 1 1 0 0 1 1]; 
+figure(1)
+stem(data, 'linewidth',3), grid on;
+title(' Information before Transmitting ');
+axis([0 11 0 1.5]);
+data_NZR=2*data-1; 
+s_p_data=reshape(data_NZR,2,length(data)/2); 
+br=10.^6; 
+f=br; 
+T=1/br; 
+t=T/99:T/99:T; 
+y=[];
+y_in=[];
+y_qd=[];
+for(i=1:length(data)/2)
+    y1=s_p_data(1,i)*cos(2*pi*f*t); 
+    y2=s_p_data(2,i)*sin(2*pi*f*t); 
+    y_in=[y_in y1];
+    y_qd=[y_qd y2]; 
+    y=[y y1+y2]; 
+end
+Tx_sig=y; 
+tt=T/99:T/99:(T*length(data))/2;
+figure(2)
+subplot(3,1,1);
+plot(tt,y_in, 'linewidth',3), grid on;
+title('wave form for inphase component in QPSK modulation ');
+xlabel('time(sec)'); ylabel(' amplitude(volt) ');
+subplot(3,1,2);
+plot(tt,y_qd, 'linewidth',3);
+grid on;
+title('wave form for Quadrature component in QPSK modulation ');
+xlabel('time(sec)');
+ylabel(' amplitude(volt) ');
+subplot(3,1,3);
+plot(tt,Tx_sig, 'r', 'linewidth',3), grid on;
+title('QPSK modulated signal (sum of inphase and Quadrature phase signal)');
+xlabel('time(sec)');
+ylabel(' amplitude(volt) ');
+
+
+Rx_data=[];
+Rx_sig=Tx_sig; 
+for(i=1:1:length(data)/2)
+    
+    Z_in=Rx_sig((i-1)*length(t)+1:i*length(t)).*cos(2*pi*f*t);
+  
+    
+    Z_in_intg=(trapz(t,Z_in))*(2/T); 
+    if(Z_in_intg>0) 
+        Rx_in_data=1;
+    else
+        Rx_in_data=0;
+    end
+    
+
+    Z_qd=Rx_sig((i-1)*length(t)+1:i*length(t)).*sin(2*pi*f*t);
+    
+    
+    Z_qd_intg=(trapz(t,Z_qd))*(2/T); 
+    if (Z_qd_intg>0) 
+        Rx_qd_data=1;
+    else
+        Rx_qd_data=0;
+    end
+    
+    Rx_data=[Rx_data Rx_in_data Rx_qd_data];
+end
+figure(3)
+stem(Rx_data,'linewidth',3)
+title('Information after Receiving');
+axis([ 0 11 0 1.5]), grid on;
+
+`
+            },
+            {
+                header: "Additional DC Program Placeholder",
+                question: "16 QAM modulation",
+                code: 
+`
+clc;
+clear all;
+close all;
+
+M = 16;               % Modulation order
+k = log2(M);          % Number of bits per symbol
+n = 30000;            % Number of symbols per frame
+sps = 1;              % Number of samples per symbol
 
 % Use default random number generator
 rng default
@@ -759,13 +844,14 @@ rng default
 dataIn = randi([0 1],n*k,1);
 
 % Plot random bits
+figure;
 stem(dataIn(1:40), 'filled');
 title('Random Bits');
 xlabel('Bit Index');
 ylabel('Binary Value');
 
 % Convert binary data to integer symbols
-dataSymbolsIn = bit2int(dataIn,k);
+dataSymbolsIn = bi2de(reshape(dataIn, k, []).', 'left-msb');
 
 % Plot random symbols
 figure;
@@ -775,137 +861,123 @@ xlabel('Symbol Index');
 ylabel('Integer Value');
 
 % Binary-encoded QAM modulation
-dataMod = qammod(dataSymbolsIn, M,'bin');
+dataMod = qammod(dataSymbolsIn, M, 'bin');
 
 % Gray-encoded QAM modulation
 dataModG = qammod(dataSymbolsIn, M);
 
-% Set Eb/No
+% Set Eb/No (in dB)
 EbNo = 10;
 
-% Convert Eb/No to SNR
-snr = convertSNR(EbNo, 'ebno', samplespersymbol=sps, bitspersymbol=k);
+% Convert Eb/No to SNR (dB)
+snr = EbNo + 10*log10(k);  % Simple SNR conversion formula
 
 % Add AWGN noise to the modulated signals
 receivedSignal = awgn(dataMod, snr, 'measured');
 receivedSignalG = awgn(dataModG, snr, 'measured');
 
-% Plot the constellation diagrams
-sPlotFig = scatterplot(receivedSignal,1,0,'g.');
+% Plot the constellation diagrams for Binary and Gray-coded QAM
+sPlotFig = scatterplot(receivedSignal, 1, 0, 'g.');
 hold on
-scatterplot(dataMod,1,0,'k*',sPlotFig)
+scatterplot(dataMod, 1, 0, 'k*', sPlotFig);
+title('Constellation Diagram for Binary-Coded QAM');
 
 % Binary-encoded QAM demodulation
-dataSymbolsOut = qamdemod(receivedSignal,M,'bin');
+dataSymbolsOut = qamdemod(receivedSignal, M, 'bin');
 
 % Gray-coded QAM demodulation
-dataSymbolsOutG = qamdemod(receivedSignalG,M);
+dataSymbolsOutG = qamdemod(receivedSignalG, M);
 
 % Convert integer symbols back to binary data
-dataOut = int2bit(dataSymbolsOut,k);
-dataOutG = int2bit(dataSymbolsOutG,k);
+dataOut = de2bi(dataSymbolsOut, k, 'left-msb').';
+dataOut = dataOut(:);  % Reshape into a column vector
+
+dataOutG = de2bi(dataSymbolsOutG, k, 'left-msb').';
+dataOutG = dataOutG(:);  % Reshape into a column vector
 
 % Calculate bit error rate for binary-coded QAM
-[numErrors,ber] = biterr(dataIn,dataOut);
-fprintf('\nThe binary coding bit error rate is %5.2e, based on %d errors.\n', ber,numErrors)
+[numErrors, ber] = biterr(dataIn, dataOut);
+fprintf('\nThe binary coding bit error rate is %5.2e, based on %d errors.\n', ber, numErrors);
 
 % Calculate bit error rate for Gray-coded QAM
-[numErrorsG,berG] = biterr(dataIn, dataOutG);
-fprintf('\nThe Gray coding bit error rate is %5.2e, based on %d errors.\n', berG,numErrorsG)
+[numErrorsG, berG] = biterr(dataIn, dataOutG);
+fprintf('\nThe Gray coding bit error rate is %5.2e, based on %d errors.\n', berG, numErrorsG);
 
 % Modulation order
 M = 16;
 
-% Integer input
-x = (0:15);
+% Integer input (symbols from 0 to M-1)
+x = 0:(M-1);
 
 % 16-QAM output (binary-coded)
-symbin = qammod(x,M,'bin');
+symbin = qammod(x, M, 'bin');
 
 % 16-QAM output (Gray-coded)
-symgray = qammod(x,M,'gray');
+symgray = qammod(x, M, 'gray');
 
 % Plot constellation diagram for Gray-coded QAM
-scatterplot(symgray,1,0,'b*');
+scatterplot(symgray, 1, 0, 'b*');
 
 % Add labels to the constellation points
 for k = 1:M
-    text(real(symgray(k))-0.0,imag(symgray(k))+0.3,dec2base(x(k),2,4), 'Color',[0 1 0]);
-    text(real(symgray(k))-0.5,imag(symgray(k))+0.3,num2str(x(k)), 'Color',[0 1 0]);
-    text(real(symbin(k))-0.0,imag(symbin(k))-0.3,dec2base(x(k),2,4), 'Color',[1 0 0]);
-    text(real(symbin(k))-0.5,imag(symbin(k))-0.3,num2str(x(k)), 'Color',[1 0 0]);
-end
+    text(real(symgray(k)) - 0.0, imag(symgray(k)) + 0.3, dec2base(x(k), 2, 4), 'Color', [0 1 0]);
+    text(real(symgray(k)) - 0.5, imag(symgray(k)) + 0.3, num2str(x(k)), 'Color', [0 1 0]);
+    text(real(symbin(k)) - 0.0, imag(symbin(k)) - 0.3, dec2base(x(k), 2, 4), 'Color', [1 0 0]);
+    text(real(symbin(k)) - 0.5, imag(symbin(k)) - 0.3, num2str(x(k)), 'Color', [1 0 0]);
+   end
 
 % Set plot title and axis limits
-title('16-QAM Symbol Mapping')
-axis([-4 4 -4 4])`
-            },     
+title('16-QAM Symbol Mapping');
+axis([-4 4 -4 4]);
+
+`
+            },
             {
                 header: "Additional DC Program Placeholder",
-                question: "Baseband signal using rectangular pulse",
+                question: "Baseband using rectangular",
                 code: 
-`% Parameters
-N = 1e6;             % Number of bits
-SNR_dB = 0:2:20;     % SNR in dB
-rect_pulse_duration = 1;  % Duration of rectangular pulse (in seconds)
-pulse_amplitude = 1;     % Amplitude of the rectangular pulse
-
-% Generate random bits
-bits = randi([0, 1], 1, N);
-
-% Rectangular pulse shaping
-% Define a rectangular pulse with duration of rect_pulse_duration
-% This pulse will represent a '1' and '0' will be considered as no pulse.
-tx_signal = zeros(1, N * rect_pulse_duration);  % Initialize the transmitted signal
-
-for k = 1:N
-    if bits(k) == 1
-        tx_signal((k-1)*rect_pulse_duration + 1 : k*rect_pulse_duration) = pulse_amplitude;
+`
+N=1e6;
+SNR_dB=0:2:20;
+rect_pulse_duration=1;
+pulse_amplitude=1;
+bits=randi([0,1],1,N);
+tx_signal=zeros(1,N*rect_pulse_duration);
+for k=1:N
+    if bits(k)==1
+        tx_signal((k-1)*rect_pulse_duration+1:k*rect_pulse_duration)=pulse_amplitude;
     end
 end
-
-% AWGN channel simulation
-ber = zeros(1, length(SNR_dB));  % Store the bit error rate
-
-for idx = 1:length(SNR_dB)
-    % Add AWGN noise to the signal
-    snr_linear = 10^(SNR_dB(idx)/10);  % Convert SNR from dB to linear scale
-    noise_power = pulse_amplitude^2 / (2 * snr_linear);  % Noise power
-    noise = sqrt(noise_power) * randn(1, length(tx_signal));  % Gaussian noise
-    
-    % Receive signal
-    rx_signal = tx_signal + noise;
-    
-    % Matched filtering and decision
-    % Assuming rectangular pulse shaping, integrate over pulse duration
-    received_bits = zeros(1, N);
-    for k = 1:N
-        % Compute the integral over the duration of each bit (rectangular pulse)
-        pulse_start = (k-1)*rect_pulse_duration + 1;
-        pulse_end = k*rect_pulse_duration;
-        
-        % Decide on the received bit based on the signal value
-        if sum(rx_signal(pulse_start:pulse_end)) > 0
-            received_bits(k) = 1;
+ber=zeros(1,length(SNR_dB));
+for idx=1:length(SNR_dB)
+    snr_linear=10^(SNR_dB(idx)/10);
+    noise_power=pulse_amplitude^2/(2*snr_linear);
+    noise=sqrt(noise_power)*randn(1,length(tx_signal));
+    rx_signal=tx_signal+noise;
+    received_bits=zeros(1,N);
+    for k=1:N
+        pulse_start=(k-1)*rect_pulse_duration+1;
+        pulse_end=k*rect_pulse_duration;
+        if sum(rx_signal(pulse_start:pulse_end))>0
+            received_bits(k)=1;
         else
-            received_bits(k) = 0;
+            received_bits(k)=0;
         end
     end
-    
-    % Compute the bit error rate (BER)
-    errors = sum(bits ~= received_bits);  % Count the bit errors
-    ber(idx) = errors / N;  % BER is the ratio of bit errors to total bits
+    errors=sum(bits~=received_bits);
+    ber(idx)=errors/N;
 end
-
-% Plot the BER vs SNR
 figure;
-semilogy(SNR_dB, ber, 'o-', 'LineWidth', 2);
+semilogy(SNR_dB,ber,'o-','LineWidth',2);
 xlabel('SNR (dB)');
-ylabel('Bit Error Rate (BER)');
-title('BER vs SNR for Rectangular Pulse Shaping in AWGN Channel');
+ylabel('Bit vs SNR for Rectangular Pulse Shapng in AWGN Channel');
 grid on;
 `
             },
+
+
+
+            
             // Additional DC programs can be added here
             /*
             {
