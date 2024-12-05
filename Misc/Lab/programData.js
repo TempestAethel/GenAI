@@ -582,7 +582,7 @@ enter the sampling frequency=1500
         DC: [
             {
                 header: "Additional DC Program Placeholder",
-                question: "COnvolution Code",
+                question: "Convolution Code",
                 code: 
 `
 clc;
@@ -682,7 +682,7 @@ disp(decode);
             },
             {
                 header: "Additional DC Program Placeholder",
-                question: "Gram SChmidt orthogonalisation",
+                question: "Gram Schmidt orthogonalisation",
                 code: 
 `
 clc; close all; clear all;
